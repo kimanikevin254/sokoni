@@ -1,7 +1,7 @@
 import { Controller } from '@nestjs/common';
 import { UserService } from './user.service';
-import { MessagePattern, Payload, RmqContext, RpcException } from '@nestjs/microservices';
-import { CreateUserDto } from '@app/common-lib';
+import { MessagePattern, Payload, RpcException } from '@nestjs/microservices';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Controller()
 export class UserController {
@@ -14,7 +14,7 @@ export class UserController {
 
   @MessagePattern({ cmd: 'create-user' })
   createUser(@Payload() createUserDto: CreateUserDto) {
-    throw new RpcException(createUserDto);
+    throw new RpcException({ statusCode: 401, message: createUserDto });
     // return createUserDto;
     // return this.userService.createUser();
   }
