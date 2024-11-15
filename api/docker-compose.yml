@@ -1,0 +1,39 @@
+services:
+  rabbitmq:
+    image: rabbitmq:4-management
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    volumes:
+      - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq.conf
+    env_file:
+      - .env
+
+  postgres:
+    image: postgres
+    restart: always
+    # set shared memory limit when using docker-compose
+    shm_size: 128mb
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=username
+      - POSTGRES_DB=sokoni
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./docker-data/db:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  pg_admin:
+    image: dpage/pgadmin4
+    depends_on:
+      - postgres
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=kevin@email.com
+      - PGADMIN_DEFAULT_PASSWORD=password
+    ports:
+      - '15432:80'
