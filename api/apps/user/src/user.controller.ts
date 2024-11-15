@@ -1,6 +1,7 @@
 import { Controller } from '@nestjs/common';
 import { UserService } from './user.service';
-import { MessagePattern } from '@nestjs/microservices';
+import { MessagePattern, Payload, RmqContext, RpcException } from '@nestjs/microservices';
+import { CreateUserDto } from '@app/common-lib';
 
 @Controller()
 export class UserController {
@@ -9,5 +10,12 @@ export class UserController {
   @MessagePattern({ cmd: 'get-users' })
   getUsers() {
     return this.userService.findAll();
+  }
+
+  @MessagePattern({ cmd: 'create-user' })
+  createUser(@Payload() createUserDto: CreateUserDto) {
+    throw new RpcException(createUserDto);
+    // return createUserDto;
+    // return this.userService.createUser();
   }
 }

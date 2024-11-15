@@ -3,6 +3,7 @@ import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from './entities/user.entity';
+import { CommonLibModule } from '@app/common-lib';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { UserEntity } from './entities/user.entity';
       synchronize: true, // Not to be used in prod
     }),
     TypeOrmModule.forFeature([UserEntity]), // Registers the entity in this scope
+    CommonLibModule,
   ],
   controllers: [UserController],
   providers: [UserService],

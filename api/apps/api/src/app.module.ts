@@ -3,6 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ProductController } from './product.controller';
+import { CommonLibModule } from '@app/common-lib';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { ProductController } from './product.controller';
         },
       },
     ]),
+    CommonLibModule,
   ],
   controllers: [AppController, ProductController],
   providers: [AppService],
