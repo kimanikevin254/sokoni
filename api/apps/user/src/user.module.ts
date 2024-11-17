@@ -4,6 +4,8 @@ import { UserService } from './user.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from './entities/user.entity';
 import { CommonLibModule } from '@app/common-lib';
+import { JwtModule } from '@nestjs/jwt';
+import { RefreshTokenEntity } from './entities/refresh-token.entity';
 
 @Module({
   imports: [
@@ -14,11 +16,15 @@ import { CommonLibModule } from '@app/common-lib';
       username: 'username',
       password: 'password',
       database: 'sokoni',
-      entities: [UserEntity],
+      entities: [UserEntity, RefreshTokenEntity],
       synchronize: true, // Not to be used in prod
     }),
-    TypeOrmModule.forFeature([UserEntity]), // Registers the entity in this scope
+    TypeOrmModule.forFeature([UserEntity, RefreshTokenEntity]), // Registers the entity in this scope
     CommonLibModule,
+    JwtModule.register({
+      global: true,
+      secret: 'Supersecret123!',
+    }),
   ],
   controllers: [UserController],
   providers: [UserService],

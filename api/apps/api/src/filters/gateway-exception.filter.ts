@@ -10,6 +10,10 @@ export class ApiGatewayExceptionFilter implements ExceptionFilter {
 
     const ctx = host.switchToHttp();
 
-    httpAdapter.reply(ctx.getResponse(), exception, exception.error.statusCode);
+    httpAdapter.reply(
+      ctx.getResponse(),
+      exception,
+      exception.error?.statusCode ? exception.error.statusCode : 500, // Return 500 if error does not come from microservices
+    );
   }
 }
