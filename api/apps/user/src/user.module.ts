@@ -6,19 +6,13 @@ import { UserEntity } from './entities/user.entity';
 import { CommonLibModule } from '@app/common-lib';
 import { JwtModule } from '@nestjs/jwt';
 import { RefreshTokenEntity } from './entities/refresh-token.entity';
+import { ConfigurationModule } from '@app/configuration';
+import { DatabaseModule } from '@app/database';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'username',
-      password: 'password',
-      database: 'sokoni',
-      entities: [UserEntity, RefreshTokenEntity],
-      synchronize: true, // Not to be used in prod
-    }),
+    ConfigurationModule,
+    DatabaseModule,
     TypeOrmModule.forFeature([UserEntity, RefreshTokenEntity]), // Registers the entity in this scope
     CommonLibModule,
     JwtModule.register({

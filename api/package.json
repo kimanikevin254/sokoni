@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
+    "@nestjs/config": "^3.3.0",
     "@nestjs/core": "^10.0.0",
     "@nestjs/jwt": "^10.2.0",
     "@nestjs/microservices": "^10.4.7",
@@ -82,7 +83,9 @@
       "<rootDir>/libs/"
     ],
     "moduleNameMapper": {
-      "^@app/common-lib(|/.*)$": "<rootDir>/libs/common-lib/src/$1"
+      "^@app/common-lib(|/.*)$": "<rootDir>/libs/common-lib/src/$1",
+      "^@app/configuration(|/.*)$": "<rootDir>/libs/configuration/src/$1",
+      "^@app/database(|/.*)$": "<rootDir>/libs/database/src/$1"
     }
   }
 }

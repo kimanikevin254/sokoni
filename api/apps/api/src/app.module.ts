@@ -1,22 +1,27 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
-import { ClientsModule, Transport } from '@nestjs/microservices';
+import { ClientsModule } from '@nestjs/microservices';
 import { CommonLibModule } from '@app/common-lib';
 import { UserController } from './controllers/user.controller';
+import { ConfigurationModule } from '@app/configuration';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
-    ClientsModule.register([
+    ConfigurationModule,
+    ClientsModule.registerAsync([
       {
         name: 'USER_SERVICE',
-        transport: Transport.RMQ,
-        options: {
-          urls: ['amqp://user:pass@localhost'],
-          queue: 'user-queue',
-          queueOptions: {
-            durable: true,
-          },
+        imports: [ConfigurationModule],
+        useFactory: (configService: ConfigService) => {
+          return {
+            options: {
+              url: configService.get('config.rmq.uri'),
+              queue: [configService.get('config.queues.user')],
+            },
+          };
         },
+        inject: [ConfigService],
       },
     ]),
     CommonLibModule,
