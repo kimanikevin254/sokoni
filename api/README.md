@@ -6,7 +6,7 @@ A comprehensive ecommerce API leveraging the microservices architecture.
 
 - User Service: Handles user authentication, registration, profile management, and vendor/role management (e.g., customer, admin, vendor). Use JWT for authentication and role-based access control.
 
-- Product Service: Manages the catalog of products, including CRUD operations for products, categories, inventory management, and product listing by vendors.
+- Store Service: Manages the catalog of products, including CRUD operations for products, categories, inventory management, and product listing by vendors.
 
 - Order Service: Deals with orders placed by customers, order statuses, payment integration, and order fulfillment processes.
 

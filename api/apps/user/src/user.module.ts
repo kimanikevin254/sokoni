@@ -8,6 +8,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { RefreshTokenEntity } from './entities/refresh-token.entity';
 import { ConfigurationModule } from '@app/configuration';
 import { DatabaseModule } from '@app/database';
+import { ClientsModule, Transport } from '@nestjs/microservices';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -19,6 +21,22 @@ import { DatabaseModule } from '@app/database';
       global: true,
       secret: 'Supersecret123!',
     }),
+    ClientsModule.registerAsync([
+      {
+        name: 'NOTIFICATION_SERVICE',
+        imports: [ConfigurationModule],
+        useFactory: (configService: ConfigService) => {
+          return {
+            transport: Transport.RMQ,
+            options: {
+              urls: [configService.get('config.rmq.uri') as string],
+              queue: configService.get('config.queues.notification'),
+            },
+          };
+        },
+        inject: [ConfigService],
+      },
+    ]),
   ],
   controllers: [UserController],
   providers: [UserService],

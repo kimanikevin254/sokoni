@@ -1,9 +1,9 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from './entities/user.entity';
 import { MoreThanOrEqual, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
-import { RpcException } from '@nestjs/microservices';
+import { ClientProxy, RpcException } from '@nestjs/microservices';
 import * as bcrypt from 'bcrypt';
 import { randomBytes } from 'crypto';
 import { JwtService } from '@nestjs/jwt';
@@ -21,6 +21,8 @@ export class UserService {
     @InjectRepository(RefreshTokenEntity)
     private readonly refreshTokenRepository: Repository<RefreshTokenEntity>,
     private jwtService: JwtService,
+    @Inject('NOTIFICATION_SERVICE')
+    private readonly notificationClient: ClientProxy,
   ) {}
 
   private async hashPassword(password: string) {
@@ -93,6 +95,11 @@ export class UserService {
     });
 
     const user = await this.userRepository.save(userInstance);
+
+    this.notificationClient.emit(
+      { cmd: 'send-verification-mail' },
+      { to: user.email, name: user.name, verificationLink: 'http://' },
+    );
 
     // Generate tokens
     const tokens = await this.generateTokens(user.id);

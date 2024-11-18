@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
-import { ClientsModule } from '@nestjs/microservices';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 import { CommonLibModule } from '@app/common-lib';
 import { UserController } from './controllers/user.controller';
 import { ConfigurationModule } from '@app/configuration';
@@ -15,9 +15,10 @@ import { ConfigService } from '@nestjs/config';
         imports: [ConfigurationModule],
         useFactory: (configService: ConfigService) => {
           return {
+            transport: Transport.RMQ,
             options: {
-              url: configService.get('config.rmq.uri'),
-              queue: [configService.get('config.queues.user')],
+              urls: [configService.get('config.rmq.uri') as string],
+              queue: configService.get('config.queues.user'),
             },
           };
         },

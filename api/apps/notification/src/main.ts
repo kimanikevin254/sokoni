@@ -1,29 +1,32 @@
 import { NestFactory } from '@nestjs/core';
-import { UserModule } from './user.module';
-import { MicroserviceOptions, Transport } from '@nestjs/microservices';
-import { TransformInterceptor } from '@app/common-lib/interceptors/transform-response.interceptor';
-import { ValidationPipe } from '@nestjs/common';
-import { MicroserviceExceptionFilter } from '@app/common-lib/filters/microservice-exception.filter';
+import { NotificationModule } from './notification.module';
 import { ConfigService } from '@nestjs/config';
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import { TransformInterceptor } from '@app/common-lib';
+import { MicroserviceExceptionFilter } from '@app/common-lib/filters/microservice-exception.filter';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
-  const app = await NestFactory.create(UserModule);
+  const app = await NestFactory.create(NotificationModule);
   const configService = app.get(ConfigService);
 
   const rmqUri = configService.get('config.rmq.uri');
-  const userQueue = configService.get('config.queues.user');
+  const notificationQueue = configService.get('config.queues.notification');
 
   const microservice =
-    await NestFactory.createMicroservice<MicroserviceOptions>(UserModule, {
-      transport: Transport.RMQ,
-      options: {
-        urls: [rmqUri],
-        queue: userQueue,
-        queueOptions: {
-          durable: true,
+    await NestFactory.createMicroservice<MicroserviceOptions>(
+      NotificationModule,
+      {
+        transport: Transport.RMQ,
+        options: {
+          urls: [rmqUri],
+          queue: notificationQueue,
+          queueOptions: {
+            durable: true,
+          },
         },
       },
-    });
+    );
 
   microservice.useGlobalInterceptors(new TransformInterceptor());
   microservice.useGlobalFilters(new MicroserviceExceptionFilter());
