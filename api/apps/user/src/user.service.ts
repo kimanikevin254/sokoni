@@ -236,4 +236,11 @@ export class UserService {
       message: 'Password updated successfully',
     };
   }
+
+  async profile(userId: string) {
+    const user = await this.findUserById(userId);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { passwordHash, ...rest } = user;
+    return rest;
+  }
 }

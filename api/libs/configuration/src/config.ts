@@ -37,6 +37,9 @@ interface Config {
     emailVerificationLink: string;
     passwordResetLink: string;
   };
+  jwt: {
+    secret: string;
+  };
 }
 
 export default registerAs<Config>('config', () => ({
@@ -74,5 +77,8 @@ export default registerAs<Config>('config', () => ({
   frontend: {
     emailVerificationLink: process.env.FRONTEND_APP_EMAIL_VERIFICATION_LINK,
     passwordResetLink: process.env.FRONTEND_APP_PASSWORD_RESET_LINK,
+  },
+  jwt: {
+    secret: process.env.JWT_SECRET,
   },
 }));

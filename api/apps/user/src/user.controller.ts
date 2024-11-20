@@ -6,8 +6,10 @@ import { LogInDto } from './dto/login.dto';
 import { RefreshTokensDto } from './dto/refresh-tokens.dto';
 import { LogOutDto } from './dto/logout.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
-import { AuthGuard } from '@app/common-lib/guards/auth.guard';
+import { AuthGuard } from '@app/authentication/guards/auth.guard';
 import { MsBody } from '@app/common-lib/decorators/ms-body.decorator';
+import { MsUser } from '@app/common-lib/decorators/ms-user.decorator';
+import { IUser } from '@app/common-lib/interfaces/user.interface';
 
 @Controller()
 export class UserController {
@@ -37,5 +39,12 @@ export class UserController {
   @MessagePattern({ cmd: 'change-password' })
   changePassword(@MsBody() dto: ChangePasswordDto) {
     return this.userService.changePassword(dto, 'str');
+  }
+
+  @MessagePattern({ cmd: 'user-profile' })
+  @UseGuards(AuthGuard)
+  profile(@MsUser() user: IUser) {
+    console.log(user);
+    return this.userService.profile(user.id);
   }
 }

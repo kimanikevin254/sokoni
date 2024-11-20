@@ -89,7 +89,8 @@
     "moduleNameMapper": {
       "^@app/common-lib(|/.*)$": "<rootDir>/libs/common-lib/src/$1",
       "^@app/configuration(|/.*)$": "<rootDir>/libs/configuration/src/$1",
-      "^@app/database(|/.*)$": "<rootDir>/libs/database/src/$1"
+      "^@app/database(|/.*)$": "<rootDir>/libs/database/src/$1",
+      "^@app/authentication(|/.*)$": "<rootDir>/libs/authentication/src/$1"
     }
   }
 }

@@ -1,9 +1,9 @@
-import { Controller, Get, Inject, Post, Req } from '@nestjs/common';
+import { Controller, Inject, Post, Req } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { IRequest } from '../interfaces/request.interface';
+import { IRequest } from '../../interfaces/request.interface';
 
-@Controller(['auth', 'user'])
-export class UserController {
+@Controller(['auth'])
+export class AuthController {
   constructor(
     @Inject('USER_SERVICE') private readonly userClient: ClientProxy,
   ) {}
@@ -51,10 +51,5 @@ export class UserController {
       { cmd: 'change-password' },
       this.extractRequestData(req),
     );
-  }
-
-  @Get()
-  profile() {
-    return { message: 'Your profile' };
   }
 }
