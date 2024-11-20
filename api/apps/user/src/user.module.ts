@@ -4,17 +4,18 @@ import { UserService } from './user.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from './entities/user.entity';
 import { CommonLibModule } from '@app/common-lib';
-import { JwtModule } from '@nestjs/jwt';
 import { RefreshTokenEntity } from './entities/refresh-token.entity';
 import { ConfigurationModule } from '@app/configuration';
 import { DatabaseModule } from '@app/database';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ConfigService } from '@nestjs/config';
 import { EmailVerificationTokenEntity } from './entities/email-verification-token.entity';
+import { AuthenticationModule } from '@app/authentication';
 
 @Module({
   imports: [
     ConfigurationModule,
+    AuthenticationModule,
     DatabaseModule,
     TypeOrmModule.forFeature([
       UserEntity,
@@ -22,10 +23,6 @@ import { EmailVerificationTokenEntity } from './entities/email-verification-toke
       EmailVerificationTokenEntity,
     ]), // Registers the entity in this scope
     CommonLibModule,
-    JwtModule.register({
-      global: true,
-      secret: 'Supersecret123!',
-    }),
     ClientsModule.registerAsync([
       {
         name: 'NOTIFICATION_SERVICE',

@@ -46,7 +46,7 @@ export class UserService {
     }
     const accessToken = await this.jwtService.signAsync(
       { sub: userId },
-      { expiresIn: '6h' },
+      { expiresIn: this.configService.get<number>('config.jwt.ttl') * 60 },
     );
 
     const refreshToken = randomBytes(32).toString('hex');
@@ -54,7 +54,10 @@ export class UserService {
     // Save the refresh token to db
     const newRefreshToken = this.refreshTokenRepository.create({
       token: refreshToken,
-      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      expiresAt: new Date(
+        Date.now() +
+          this.configService.get<number>('config.refreshToken.ttl') * 1000,
+      ),
       userId: user,
     });
 

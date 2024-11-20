@@ -39,6 +39,10 @@ interface Config {
   };
   jwt: {
     secret: string;
+    ttl: number;
+  };
+  refreshToken: {
+    ttl: number;
   };
 }
 
@@ -80,5 +84,9 @@ export default registerAs<Config>('config', () => ({
   },
   jwt: {
     secret: process.env.JWT_SECRET,
+    ttl: parseInt(process.env.JWT_TTL_MINUTES),
+  },
+  refreshToken: {
+    ttl: parseInt(process.env.REFRESH_TOKEN_TTL_MINUTES),
   },
 }));
