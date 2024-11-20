@@ -11,5 +11,5 @@ export class SendVerificationMailDto {
 
   @IsString()
   @IsNotEmpty()
-  verificationLink: string;
+  verificationToken: string;
 }

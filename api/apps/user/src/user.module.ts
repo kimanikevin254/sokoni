@@ -10,12 +10,17 @@ import { ConfigurationModule } from '@app/configuration';
 import { DatabaseModule } from '@app/database';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ConfigService } from '@nestjs/config';
+import { EmailVerificationTokenEntity } from './entities/email-verification-token.entity';
 
 @Module({
   imports: [
     ConfigurationModule,
     DatabaseModule,
-    TypeOrmModule.forFeature([UserEntity, RefreshTokenEntity]), // Registers the entity in this scope
+    TypeOrmModule.forFeature([
+      UserEntity,
+      RefreshTokenEntity,
+      EmailVerificationTokenEntity,
+    ]), // Registers the entity in this scope
     CommonLibModule,
     JwtModule.register({
       global: true,

@@ -4,6 +4,7 @@ import * as FormData from 'form-data';
 import Mailgun from 'mailgun.js';
 import { EmailTemplateService } from './email-template.service';
 import { SendVerificationMailDto } from './dto/send-verification-mail.dto';
+import { CustomRpcException } from '@app/common-lib/utils/custom-rpc-exception';
 
 @Injectable()
 export class NotificationService {
@@ -35,31 +36,47 @@ export class NotificationService {
   }
 
   async sendVerificationMail(dto: SendVerificationMailDto) {
-    const htmlContent =
-      await this.emailTemplateService.verificationEmailTemplate(
-        dto.name.split(' ')[0],
-        dto.verificationLink,
-      );
+    try {
+      const verificationLink = `${this.configService.get<string>('config.frontend.emailVerificationLink')}?token=${dto.verificationToken}`;
 
-    return await this.mailgunClient.messages.create(this.MAILGUN_DOMAIN, {
-      from: this.MAIL_FROM,
-      to: dto.to,
-      subject: 'Email Verification',
-      html: htmlContent,
-    });
+      const htmlContent =
+        await this.emailTemplateService.verificationEmailTemplate(
+          dto.name.split(' ')[0],
+          verificationLink,
+        );
+
+      return await this.mailgunClient.messages.create(this.MAILGUN_DOMAIN, {
+        from: this.MAIL_FROM,
+        to: dto.to,
+        subject: 'Email Verification',
+        html: htmlContent,
+      });
+    } catch (error) {
+      throw new CustomRpcException({
+        message: error || 'An error occurred while sending email',
+        statusCode: 500,
+      });
+    }
   }
 
   async sendPasswordResetMail(to: string, name: string, resetLink: string) {
-    const htmlContent = await this.emailTemplateService.passwordResetTemplate(
-      name.split(' ')[0],
-      resetLink,
-    );
+    try {
+      const htmlContent = await this.emailTemplateService.passwordResetTemplate(
+        name.split(' ')[0],
+        resetLink,
+      );
 
-    return await this.mailgunClient.messages.create(this.MAILGUN_DOMAIN, {
-      from: this.MAIL_FROM,
-      to,
-      subject: 'Password Reset Request',
-      html: htmlContent,
-    });
+      return await this.mailgunClient.messages.create(this.MAILGUN_DOMAIN, {
+        from: this.MAIL_FROM,
+        to,
+        subject: 'Password Reset Request',
+        html: htmlContent,
+      });
+    } catch (error) {
+      throw new CustomRpcException({
+        message: error || 'An error occurred while sending email',
+        statusCode: 500,
+      });
+    }
   }
 }

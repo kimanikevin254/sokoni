@@ -7,6 +7,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { RefreshTokenEntity } from './refresh-token.entity';
+import { EmailVerificationTokenEntity } from './email-verification-token.entity';
 
 @Entity({ name: 'user' })
 export class UserEntity {
@@ -36,4 +37,10 @@ export class UserEntity {
     (refreshTokenEntity) => refreshTokenEntity.userId,
   )
   refreshTokens: RefreshTokenEntity[];
+
+  @OneToMany(
+    () => EmailVerificationTokenEntity,
+    (refreshTokenEntity) => refreshTokenEntity.userId,
+  )
+  emailVerificationTokens: EmailVerificationTokenEntity[];
 }

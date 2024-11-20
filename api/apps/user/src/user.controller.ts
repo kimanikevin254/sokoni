@@ -15,7 +15,6 @@ export class UserController {
 
   @MessagePattern({ cmd: 'create-user' })
   createUser(@MsBody() createUserDto: CreateUserDto) {
-    console.log(createUserDto);
     return this.userService.createUser(createUserDto);
   }
 

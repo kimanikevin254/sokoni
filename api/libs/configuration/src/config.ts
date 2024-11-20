@@ -33,6 +33,10 @@ interface Config {
     mailgunDomain: string;
     from: string;
   };
+  frontend: {
+    emailVerificationLink: string;
+    passwordResetLink: string;
+  };
 }
 
 export default registerAs<Config>('config', () => ({
@@ -66,5 +70,9 @@ export default registerAs<Config>('config', () => ({
     mailgunKey: process.env.MAILGUN_API_KEY,
     mailgunDomain: process.env.MAILGUN_DOMAIN,
     from: process.env.MAIL_FROM,
+  },
+  frontend: {
+    emailVerificationLink: process.env.FRONTEND_APP_EMAIL_VERIFICATION_LINK,
+    passwordResetLink: process.env.FRONTEND_APP_PASSWORD_RESET_LINK,
   },
 }));

@@ -12,6 +12,8 @@ import { LogInDto } from './dto/login.dto';
 import { RefreshTokensDto } from './dto/refresh-tokens.dto';
 import { LogOutDto } from './dto/logout.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import { EmailVerificationTokenEntity } from './entities/email-verification-token.entity';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UserService {
@@ -20,9 +22,12 @@ export class UserService {
     private readonly userRepository: Repository<UserEntity>,
     @InjectRepository(RefreshTokenEntity)
     private readonly refreshTokenRepository: Repository<RefreshTokenEntity>,
+    @InjectRepository(EmailVerificationTokenEntity)
+    private readonly emailVerificationTokenRepository: Repository<EmailVerificationTokenEntity>,
     private jwtService: JwtService,
     @Inject('NOTIFICATION_SERVICE')
     private readonly notificationClient: ClientProxy,
+    private readonly configService: ConfigService,
   ) {}
 
   private async hashPassword(password: string) {
@@ -96,10 +101,24 @@ export class UserService {
 
     const user = await this.userRepository.save(userInstance);
 
-    this.notificationClient.emit(
-      { cmd: 'send-verification-mail' },
-      { to: user.email, name: user.name, verificationLink: 'http://' },
-    );
+    // Generate email verification token
+    const verificationToken = randomBytes(32).toString('hex');
+
+    // Save email verification token
+    const newEmailVerificationToken =
+      this.emailVerificationTokenRepository.create({
+        token: verificationToken,
+        userId: { id: user.id },
+        expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+      });
+
+    await this.emailVerificationTokenRepository.save(newEmailVerificationToken);
+
+    this.notificationClient.emit('send_verification_mail', {
+      to: user.email,
+      name: user.name,
+      verificationToken,
+    });
 
     // Generate tokens
     const tokens = await this.generateTokens(user.id);
