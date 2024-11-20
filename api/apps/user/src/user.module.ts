@@ -2,15 +2,15 @@ import { Module } from '@nestjs/common';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserEntity } from './entities/user.entity';
 import { CommonLibModule } from '@app/common-lib';
-import { RefreshTokenEntity } from './entities/refresh-token.entity';
 import { ConfigurationModule } from '@app/configuration';
 import { DatabaseModule } from '@app/database';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ConfigService } from '@nestjs/config';
-import { EmailVerificationTokenEntity } from './entities/email-verification-token.entity';
 import { AuthenticationModule } from '@app/authentication';
+import { UserEntity } from '@app/database/entities/user.entity';
+import { RefreshTokenEntity } from '@app/database/entities/refresh-token.entity';
+import { EmailVerificationTokenEntity } from '@app/database/entities/email-verification-token.entity';
 
 @Module({
   imports: [

@@ -1,19 +1,19 @@
 import { HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserEntity } from './entities/user.entity';
 import { MoreThanOrEqual, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import * as bcrypt from 'bcrypt';
 import { randomBytes } from 'crypto';
 import { JwtService } from '@nestjs/jwt';
-import { RefreshTokenEntity } from './entities/refresh-token.entity';
 import { LogInDto } from './dto/login.dto';
 import { RefreshTokensDto } from './dto/refresh-tokens.dto';
 import { LogOutDto } from './dto/logout.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
-import { EmailVerificationTokenEntity } from './entities/email-verification-token.entity';
 import { ConfigService } from '@nestjs/config';
+import { UserEntity } from '@app/database/entities/user.entity';
+import { RefreshTokenEntity } from '@app/database/entities/refresh-token.entity';
+import { EmailVerificationTokenEntity } from '@app/database/entities/email-verification-token.entity';
 
 @Injectable()
 export class UserService {

@@ -2,9 +2,9 @@ import { ConfigurationModule } from '@app/configuration';
 import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { EmailVerificationTokenEntity } from 'apps/user/src/entities/email-verification-token.entity';
-import { RefreshTokenEntity } from 'apps/user/src/entities/refresh-token.entity';
-import { UserEntity } from 'apps/user/src/entities/user.entity';
+import { EmailVerificationTokenEntity } from '@app/database/entities/email-verification-token.entity';
+import { RefreshTokenEntity } from '@app/database/entities/refresh-token.entity';
+import { UserEntity } from '@app/database/entities/user.entity';
 
 @Module({
   providers: [],
