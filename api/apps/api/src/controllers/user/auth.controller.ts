@@ -1,4 +1,4 @@
-import { Controller, Inject, Post, Req } from '@nestjs/common';
+import { Controller, Get, Inject, Post, Req } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { IRequest } from '../../interfaces/request.interface';
 
@@ -17,6 +17,14 @@ export class AuthController {
   register(@Req() req: IRequest) {
     return this.userClient.send(
       { cmd: 'create-user' },
+      this.extractRequestData(req),
+    );
+  }
+
+  @Get('verify-email')
+  verifyEmail(@Req() req: IRequest) {
+    return this.userClient.send(
+      { cmd: 'verify-email' },
       this.extractRequestData(req),
     );
   }

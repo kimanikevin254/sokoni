@@ -26,9 +26,7 @@ export class RefreshTokenRepository implements IRefreshTokenRepository {
       where: {
         token: refreshToken.token,
         user: { id: refreshToken.user.id },
-        expiresAt: refreshToken.expiresAt
-          ? MoreThanOrEqual(refreshToken.expiresAt)
-          : undefined,
+        expiresAt: MoreThanOrEqual(new Date()),
       },
       relations: ['user'],
     });

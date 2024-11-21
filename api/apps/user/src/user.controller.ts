@@ -10,6 +10,8 @@ import { AuthGuard } from '@app/authentication/guards/auth.guard';
 import { MsBody } from '@app/common-lib/decorators/ms-body.decorator';
 import { MsUser } from '@app/common-lib/decorators/ms-user.decorator';
 import { IUser } from '@app/common-lib/interfaces/user.interface';
+import { MsQuery } from '@app/common-lib/decorators/ms-params.decorator';
+import { VerifyEmailDto } from './dto/verify-email.dto';
 
 @Controller()
 export class UserController {
@@ -18,6 +20,11 @@ export class UserController {
   @MessagePattern({ cmd: 'create-user' })
   createUser(@MsBody() createUserDto: CreateUserDto) {
     return this.userService.createUser(createUserDto);
+  }
+
+  @MessagePattern({ cmd: 'verify-email' })
+  verifyEmail(@MsQuery() dto: VerifyEmailDto) {
+    return this.userService.verifyEmail(dto);
   }
 
   @MessagePattern({ cmd: 'login-user' })

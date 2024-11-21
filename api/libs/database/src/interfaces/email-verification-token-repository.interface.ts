@@ -7,7 +7,7 @@ export interface IEmailVerificationTokenRepository {
   save(
     emailVerificationToken: EmailVerificationTokenEntity,
   ): Promise<EmailVerificationTokenEntity>;
-  findValidToken(token: string): Promise<EmailVerificationTokenEntity>;
+  findValidToken(token: string): Promise<EmailVerificationTokenEntity | null>;
   update(
     id: string,
     updates: Partial<EmailVerificationTokenEntity>,

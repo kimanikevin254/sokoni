@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { MoreThanOrEqual, Repository } from 'typeorm';
 import { EmailVerificationTokenEntity } from '../entities';
 import { IEmailVerificationTokenRepository } from '../interfaces';
 
@@ -27,7 +27,13 @@ export class EmailVerificationTokenRepository
 
   findValidToken(token: string): Promise<EmailVerificationTokenEntity> {
     return this.repository.findOne({
-      where: { token },
+      where: { token, expiresAt: MoreThanOrEqual(new Date()) },
+      relations: ['user'],
+      select: {
+        user: {
+          id: true,
+        },
+      },
     });
   }
 

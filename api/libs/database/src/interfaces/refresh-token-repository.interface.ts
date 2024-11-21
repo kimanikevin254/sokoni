@@ -7,7 +7,6 @@ export interface IRefreshTokenRepository {
     refreshToken: Partial<{
       token: string;
       userId: string;
-      expiresAt: Date;
     }>,
   ): Promise<RefreshTokenEntity | null>;
   update(

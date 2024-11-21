@@ -1,6 +1,6 @@
 import { HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { ClientProxy, RpcException } from '@nestjs/microservices';
+import { ClientProxy } from '@nestjs/microservices';
 import * as bcrypt from 'bcrypt';
 import { randomBytes } from 'crypto';
 import { JwtService } from '@nestjs/jwt';
@@ -17,6 +17,8 @@ import {
   IUserRepository,
   IUserRepositoryToken,
 } from '@app/database';
+import { CustomRpcException } from '@app/common-lib/utils/custom-rpc-exception';
+import { VerifyEmailDto } from './dto/verify-email.dto';
 
 @Injectable()
 export class UserService {
@@ -42,7 +44,7 @@ export class UserService {
     const user = await this.userRepository.findById(userId);
 
     if (!user) {
-      throw new RpcException({
+      throw new CustomRpcException({
         statusCode: HttpStatus.BAD_REQUEST,
         message: 'User does not exist',
       });
@@ -78,7 +80,7 @@ export class UserService {
     const userExists = await this.userRepository.findByEmail(dto.email);
 
     if (userExists) {
-      throw new RpcException({
+      throw new CustomRpcException({
         statusCode: 400,
         message: 'This email address is already registered.',
       });
@@ -119,17 +121,57 @@ export class UserService {
       verificationToken,
     });
 
-    // Generate tokens
-    const tokens = await this.generateTokens(user.id);
+    return {
+      message:
+        'Click the link sent to the provided email address to verify your account.',
+    };
+  }
 
-    return { tokens, userId: user.id };
+  async verifyEmail(dto: VerifyEmailDto) {
+    try {
+      // Check if token is valid
+      const emailVerificationToken =
+        await this.emailVerificationTokenRepository.findValidToken(dto.token);
+
+      if (!emailVerificationToken) {
+        throw new CustomRpcException({
+          message: 'Invalid token',
+          statusCode: HttpStatus.BAD_REQUEST,
+        });
+      }
+
+      console.log(emailVerificationToken);
+
+      // Mark user's email as verified
+      const user = await this.userRepository.update(
+        emailVerificationToken.user.id,
+        { emailVerifiedAt: new Date() },
+      );
+
+      // Expire the token
+      await this.emailVerificationTokenRepository.update(
+        emailVerificationToken.id,
+        { expiresAt: new Date() },
+      );
+
+      // Generate tokens
+      const tokens = await this.generateTokens(user.id);
+
+      return {
+        tokens,
+        userId: user.id,
+      };
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
   }
 
   async login(dto: LogInDto) {
     const user = await this.userRepository.findByEmail(dto.email);
 
     if (!user) {
-      throw new RpcException({
+      throw new CustomRpcException({
         statusCode: HttpStatus.BAD_REQUEST,
         message: 'Incorrect credentials',
       });
@@ -142,9 +184,17 @@ export class UserService {
     );
 
     if (!passwordMatches) {
-      throw new RpcException({
+      throw new CustomRpcException({
         statusCode: HttpStatus.BAD_REQUEST,
         message: 'Incorrect credentials',
+      });
+    }
+
+    // Check if email address has been verified
+    if (!user.emailVerifiedAt) {
+      throw new CustomRpcException({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 'You have not verified your email address',
       });
     }
 
@@ -159,12 +209,11 @@ export class UserService {
     const refreshToken = await this.refreshTokenRepository.findValidToken({
       token: dto.refreshToken,
       userId: dto.userId,
-      expiresAt: new Date(), // Check that expiresAt is greater than or equal to the current date
     });
 
     if (!refreshToken) {
       // Refresh token not found
-      throw new RpcException({
+      throw new CustomRpcException({
         statusCode: HttpStatus.UNAUTHORIZED,
         message: 'Unauthorized',
       });
@@ -201,7 +250,7 @@ export class UserService {
     const user = await this.userRepository.findById(userId);
 
     if (!user) {
-      throw new RpcException({
+      throw new CustomRpcException({
         statusCode: HttpStatus.NOT_FOUND,
         message: 'User not found',
       });
@@ -214,7 +263,7 @@ export class UserService {
     );
 
     if (!passwordMatches) {
-      throw new RpcException({
+      throw new CustomRpcException({
         statusCode: HttpStatus.BAD_REQUEST,
         message: 'Passwords do not match',
       });
