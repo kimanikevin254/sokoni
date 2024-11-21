@@ -19,7 +19,7 @@ export class RefreshTokenRepository implements IRefreshTokenRepository {
     return this.repository.save(refreshToken);
   }
 
-  findToken(
+  findValidToken(
     refreshToken: Partial<RefreshTokenEntity>,
   ): Promise<RefreshTokenEntity | null> {
     return this.repository.findOne({

@@ -152,7 +152,7 @@ export class UserService {
 
   async refreshTokens(dto: RefreshTokensDto) {
     // Check if refresh token exists
-    const refreshToken = await this.refreshTokenRepository.findToken({
+    const refreshToken = await this.refreshTokenRepository.findValidToken({
       token: dto.refreshToken,
       userId: dto.userId,
       expiresAt: new Date(), // Check that expiresAt is greater than or equal to the current date
@@ -181,7 +181,7 @@ export class UserService {
   }
 
   async logOut(dto: LogOutDto, userId: string) {
-    const refreshToken = await this.refreshTokenRepository.findToken({
+    const refreshToken = await this.refreshTokenRepository.findValidToken({
       token: dto.refreshToken,
       userId,
     });

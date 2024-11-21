@@ -3,7 +3,7 @@ import { RefreshTokenEntity } from '../entities';
 export interface IRefreshTokenRepository {
   create(refreshToken: Partial<RefreshTokenEntity>): RefreshTokenEntity;
   save(refreshToken: RefreshTokenEntity): Promise<RefreshTokenEntity>;
-  findToken(
+  findValidToken(
     refreshToken: Partial<{
       token: string;
       userId: string;
