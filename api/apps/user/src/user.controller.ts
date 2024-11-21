@@ -32,8 +32,8 @@ export class UserController {
 
   @MessagePattern({ cmd: 'logout' })
   @UseGuards(AuthGuard)
-  logout(@MsBody() dto: LogOutDto) {
-    return this.userService.logOut(dto);
+  logout(@MsBody() dto: LogOutDto, @MsUser() user: IUser) {
+    return this.userService.logOut(dto, user.id);
   }
 
   @MessagePattern({ cmd: 'change-password' })

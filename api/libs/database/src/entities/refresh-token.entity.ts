@@ -26,5 +26,5 @@ export class RefreshTokenEntity {
   updatedAt: Date;
 
   @ManyToOne(() => UserEntity, (userEntity) => userEntity.id)
-  userId: UserEntity;
+  user: UserEntity;
 }

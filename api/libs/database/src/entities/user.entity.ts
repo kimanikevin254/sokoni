@@ -34,13 +34,13 @@ export class UserEntity {
 
   @OneToMany(
     () => RefreshTokenEntity,
-    (refreshTokenEntity) => refreshTokenEntity.userId,
+    (refreshTokenEntity) => refreshTokenEntity.user,
   )
   refreshTokens: RefreshTokenEntity[];
 
   @OneToMany(
     () => EmailVerificationTokenEntity,
-    (refreshTokenEntity) => refreshTokenEntity.userId,
+    (refreshTokenEntity) => refreshTokenEntity.user,
   )
   emailVerificationTokens: EmailVerificationTokenEntity[];
 }

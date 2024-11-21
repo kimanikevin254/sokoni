@@ -31,7 +31,11 @@ import {
       },
       inject: [ConfigService],
     }),
-    TypeOrmModule.forFeature([UserEntity]),
+    TypeOrmModule.forFeature([
+      UserEntity,
+      RefreshTokenEntity,
+      EmailVerificationTokenEntity,
+    ]),
   ],
   exports: [TypeOrmModule],
 })

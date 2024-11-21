@@ -26,5 +26,5 @@ export class EmailVerificationTokenEntity {
   updatedAt: Date;
 
   @ManyToOne(() => UserEntity, (userEntity) => userEntity.id)
-  userId: UserEntity;
+  user: UserEntity;
 }

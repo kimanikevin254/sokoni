@@ -1,6 +1,6 @@
 import { HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MoreThanOrEqual, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import * as bcrypt from 'bcrypt';
@@ -13,16 +13,15 @@ import { ChangePasswordDto } from './dto/change-password.dto';
 import { ConfigService } from '@nestjs/config';
 import {
   EmailVerificationTokenEntity,
+  IRefreshTokenRepository,
+  IRefreshTokenRepositoryToken,
   IUserRepository,
   IUserRepositoryToken,
-  RefreshTokenEntity,
 } from '@app/database';
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(RefreshTokenEntity)
-    private readonly refreshTokenRepository: Repository<RefreshTokenEntity>,
     @InjectRepository(EmailVerificationTokenEntity)
     private readonly emailVerificationTokenRepository: Repository<EmailVerificationTokenEntity>,
     private jwtService: JwtService,
@@ -31,6 +30,8 @@ export class UserService {
     private readonly configService: ConfigService,
     @Inject(IUserRepositoryToken)
     private readonly userRepository: IUserRepository,
+    @Inject(IRefreshTokenRepositoryToken)
+    private readonly refreshTokenRepository: IRefreshTokenRepository,
   ) {}
 
   private async hashPassword(password: string) {
@@ -61,7 +62,7 @@ export class UserService {
         Date.now() +
           this.configService.get<number>('config.refreshToken.ttl') * 1000,
       ),
-      userId: user,
+      user,
     });
 
     await this.refreshTokenRepository.save(newRefreshToken);
@@ -102,7 +103,7 @@ export class UserService {
     const newEmailVerificationToken =
       this.emailVerificationTokenRepository.create({
         token: verificationToken,
-        userId: { id: user.id },
+        user: { id: user.id },
         expiresAt: new Date(Date.now() + 10 * 60 * 1000),
       });
 
@@ -151,12 +152,10 @@ export class UserService {
 
   async refreshTokens(dto: RefreshTokensDto) {
     // Check if refresh token exists
-    const refreshToken = await this.refreshTokenRepository.findOne({
-      where: {
-        token: dto.refreshToken,
-        userId: { id: dto.userId },
-        expiresAt: MoreThanOrEqual(new Date()), // Check that expiresAt is greater than or equal to the current date
-      },
+    const refreshToken = await this.refreshTokenRepository.findToken({
+      token: dto.refreshToken,
+      userId: dto.userId,
+      expiresAt: new Date(), // Check that expiresAt is greater than or equal to the current date
     });
 
     if (!refreshToken) {
@@ -168,10 +167,9 @@ export class UserService {
     }
 
     // Mark old refresh token as expired
-    await this.refreshTokenRepository.update(
-      { token: dto.refreshToken },
-      { expiresAt: new Date() },
-    );
+    await this.refreshTokenRepository.update(refreshToken.id, {
+      expiresAt: new Date(),
+    });
 
     // Generate tokens
     const tokens = await this.generateTokens(dto.userId);
@@ -182,16 +180,16 @@ export class UserService {
     };
   }
 
-  async logOut(dto: LogOutDto) {
-    const refreshToken = await this.refreshTokenRepository.findOne({
-      where: { token: dto.refreshToken },
+  async logOut(dto: LogOutDto, userId: string) {
+    const refreshToken = await this.refreshTokenRepository.findToken({
+      token: dto.refreshToken,
+      userId,
     });
 
     if (refreshToken) {
-      await this.refreshTokenRepository.update(
-        { token: refreshToken.token },
-        { expiresAt: new Date() },
-      );
+      await this.refreshTokenRepository.update(refreshToken.id, {
+        expiresAt: new Date(),
+      });
     } else return;
   }
 

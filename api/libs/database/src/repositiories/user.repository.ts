@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { IUserRepository } from '../interfaces/user-repository.interface';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserEntity } from '../entities/user.entity';
 import { Repository } from 'typeorm';
+import { UserEntity } from '../entities';
+import { IUserRepository } from '../interfaces';
 
 @Injectable()
 export class UserRepository implements IUserRepository {
@@ -37,7 +37,6 @@ export class UserRepository implements IUserRepository {
 
   async update(id: string, updates: Partial<UserEntity>): Promise<UserEntity> {
     await this.repository.update(id, updates);
-    const updatedUser = await this.repository.findOne({ where: { id } });
-    return updatedUser;
+    return await this.repository.findOne({ where: { id } });
   }
 }
