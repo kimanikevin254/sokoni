@@ -1,6 +1,4 @@
 import { HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import * as bcrypt from 'bcrypt';
@@ -12,7 +10,8 @@ import { LogOutDto } from './dto/logout.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { ConfigService } from '@nestjs/config';
 import {
-  EmailVerificationTokenEntity,
+  IEmailVerificationTokenRepository,
+  IEmailVerificationTokenRepositoryToken,
   IRefreshTokenRepository,
   IRefreshTokenRepositoryToken,
   IUserRepository,
@@ -22,8 +21,6 @@ import {
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(EmailVerificationTokenEntity)
-    private readonly emailVerificationTokenRepository: Repository<EmailVerificationTokenEntity>,
     private jwtService: JwtService,
     @Inject('NOTIFICATION_SERVICE')
     private readonly notificationClient: ClientProxy,
@@ -32,6 +29,8 @@ export class UserService {
     private readonly userRepository: IUserRepository,
     @Inject(IRefreshTokenRepositoryToken)
     private readonly refreshTokenRepository: IRefreshTokenRepository,
+    @Inject(IEmailVerificationTokenRepositoryToken)
+    private readonly emailVerificationTokenRepository: IEmailVerificationTokenRepository,
   ) {}
 
   private async hashPassword(password: string) {
@@ -103,8 +102,13 @@ export class UserService {
     const newEmailVerificationToken =
       this.emailVerificationTokenRepository.create({
         token: verificationToken,
-        user: { id: user.id },
-        expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+        user,
+        expiresAt: new Date(
+          Date.now() +
+            this.configService.get('config.linksTtl.verificationLink') *
+              60 *
+              1000,
+        ),
       });
 
     await this.emailVerificationTokenRepository.save(newEmailVerificationToken);
