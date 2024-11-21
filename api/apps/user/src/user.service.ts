@@ -11,15 +11,16 @@ import { RefreshTokensDto } from './dto/refresh-tokens.dto';
 import { LogOutDto } from './dto/logout.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { ConfigService } from '@nestjs/config';
-import { UserEntity } from '@app/database/entities/user.entity';
-import { RefreshTokenEntity } from '@app/database/entities/refresh-token.entity';
-import { EmailVerificationTokenEntity } from '@app/database/entities/email-verification-token.entity';
+import {
+  EmailVerificationTokenEntity,
+  IUserRepository,
+  IUserRepositoryToken,
+  RefreshTokenEntity,
+} from '@app/database';
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(UserEntity)
-    private readonly userRepository: Repository<UserEntity>,
     @InjectRepository(RefreshTokenEntity)
     private readonly refreshTokenRepository: Repository<RefreshTokenEntity>,
     @InjectRepository(EmailVerificationTokenEntity)
@@ -28,6 +29,8 @@ export class UserService {
     @Inject('NOTIFICATION_SERVICE')
     private readonly notificationClient: ClientProxy,
     private readonly configService: ConfigService,
+    @Inject(IUserRepositoryToken)
+    private readonly userRepository: IUserRepository,
   ) {}
 
   private async hashPassword(password: string) {
@@ -36,7 +39,7 @@ export class UserService {
   }
 
   private async generateTokens(userId: string) {
-    const user = await this.findUserById(userId);
+    const user = await this.userRepository.findById(userId);
 
     if (!user) {
       throw new RpcException({
@@ -67,24 +70,12 @@ export class UserService {
   }
 
   findAll() {
-    return this.userRepository.find();
-  }
-
-  findUserByEmail(email: string) {
-    return this.userRepository.findOne({
-      where: { email: email },
-    });
-  }
-
-  findUserById(userId: string) {
-    return this.userRepository.findOne({
-      where: { id: userId },
-    });
+    return this.userRepository.findAll();
   }
 
   async createUser(dto: CreateUserDto) {
     // Make sure email is not registered
-    const userExists = await this.findUserByEmail(dto.email);
+    const userExists = await this.userRepository.findByEmail(dto.email);
 
     if (userExists) {
       throw new RpcException({
@@ -130,7 +121,7 @@ export class UserService {
   }
 
   async login(dto: LogInDto) {
-    const user = await this.findUserByEmail(dto.email);
+    const user = await this.userRepository.findByEmail(dto.email);
 
     if (!user) {
       throw new RpcException({
@@ -205,7 +196,7 @@ export class UserService {
   }
 
   async changePassword(dto: ChangePasswordDto, userId: string) {
-    const user = await this.findUserById(userId);
+    const user = await this.userRepository.findById(userId);
 
     if (!user) {
       throw new RpcException({
@@ -230,10 +221,7 @@ export class UserService {
     const passwordHash = await this.hashPassword(dto.newPassword);
 
     // Update user password
-    await this.userRepository.update(
-      { id: user.id },
-      { passwordHash: passwordHash },
-    );
+    await this.userRepository.update(user.id, { passwordHash: passwordHash });
 
     return {
       message: 'Password updated successfully',
@@ -241,7 +229,7 @@ export class UserService {
   }
 
   async profile(userId: string) {
-    const user = await this.findUserById(userId);
+    const user = await this.userRepository.findById(userId);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { passwordHash, ...rest } = user;
     return rest;

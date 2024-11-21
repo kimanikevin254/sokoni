@@ -13,7 +13,6 @@ export class NotificationService {
   private MAILGUN_KEY: string;
   private MAILGUN_DOMAIN: string;
   private MAIL_FROM: string;
-  private APP_NAME: string;
 
   constructor(
     private configService: ConfigService,
@@ -25,7 +24,6 @@ export class NotificationService {
       'config.mail.mailgunDomain',
     );
     this.MAIL_FROM = this.configService.get<string>('config.mail.from');
-    this.APP_NAME = this.configService.get<string>('config.app.name');
 
     // Initialize Mailgun client
     const mailgun = new Mailgun(FormData);
@@ -53,7 +51,7 @@ export class NotificationService {
       });
     } catch (error) {
       throw new CustomRpcException({
-        message: error || 'An error occurred while sending email',
+        message: error,
         statusCode: 500,
       });
     }
@@ -74,7 +72,7 @@ export class NotificationService {
       });
     } catch (error) {
       throw new CustomRpcException({
-        message: error || 'An error occurred while sending email',
+        message: error,
         statusCode: 500,
       });
     }
