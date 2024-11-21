@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { RefreshTokenEntity } from './refresh-token.entity';
 import { EmailVerificationTokenEntity } from './email-verification-token.entity';
+import { PasswordResetTokenEntity } from './password-reset-token.entity';
 
 @Entity({ name: 'user' })
 export class UserEntity {
@@ -43,4 +44,10 @@ export class UserEntity {
     (refreshTokenEntity) => refreshTokenEntity.user,
   )
   emailVerificationTokens: EmailVerificationTokenEntity[];
+
+  @OneToMany(
+    () => PasswordResetTokenEntity,
+    (passwordResetTokenEntity) => passwordResetTokenEntity.id,
+  )
+  passwordResetTokens: PasswordResetTokenEntity[];
 }

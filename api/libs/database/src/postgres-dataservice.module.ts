@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {
   EmailVerificationTokenEntity,
+  PasswordResetTokenEntity,
   RefreshTokenEntity,
   UserEntity,
 } from './entities';
@@ -25,6 +26,7 @@ import {
             UserEntity,
             RefreshTokenEntity,
             EmailVerificationTokenEntity,
+            PasswordResetTokenEntity,
           ],
           synchronize: true, // Not to be used in prod
         };
@@ -35,6 +37,7 @@ import {
       UserEntity,
       RefreshTokenEntity,
       EmailVerificationTokenEntity,
+      PasswordResetTokenEntity,
     ]),
   ],
   exports: [TypeOrmModule],

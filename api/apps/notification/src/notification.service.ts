@@ -5,6 +5,7 @@ import Mailgun from 'mailgun.js';
 import { EmailTemplateService } from './email-template.service';
 import { SendVerificationMailDto } from './dto/send-verification-mail.dto';
 import { CustomRpcException } from '@app/common-lib/utils/custom-rpc-exception';
+import { SendPasswordResetMailDto } from './dto/send-password-reset-mail.dto';
 
 @Injectable()
 export class NotificationService {
@@ -57,16 +58,18 @@ export class NotificationService {
     }
   }
 
-  async sendPasswordResetMail(to: string, name: string, resetLink: string) {
+  async sendPasswordResetMail(dto: SendPasswordResetMailDto) {
     try {
+      const resetLink = `${this.configService.get<string>('config.frontend.passwordResetLink')}?token=${dto.token}`;
+
       const htmlContent = await this.emailTemplateService.passwordResetTemplate(
-        name.split(' ')[0],
+        dto.name.split(' ')[0],
         resetLink,
       );
 
       return await this.mailgunClient.messages.create(this.MAILGUN_DOMAIN, {
         from: this.MAIL_FROM,
-        to,
+        to: dto.to,
         subject: 'Password Reset Request',
         html: htmlContent,
       });

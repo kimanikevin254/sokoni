@@ -19,16 +19,22 @@ export class RefreshTokenRepository implements IRefreshTokenRepository {
     return this.repository.save(refreshToken);
   }
 
-  findValidToken(
-    refreshToken: Partial<RefreshTokenEntity>,
-  ): Promise<RefreshTokenEntity | null> {
+  findValidToken(refreshToken: {
+    token: string;
+    userId: string;
+  }): Promise<RefreshTokenEntity | null> {
     return this.repository.findOne({
       where: {
         token: refreshToken.token,
-        user: { id: refreshToken.user.id },
+        user: { id: refreshToken.userId },
         expiresAt: MoreThanOrEqual(new Date()),
       },
       relations: ['user'],
+      select: {
+        user: {
+          id: true,
+        },
+      },
     });
   }
 

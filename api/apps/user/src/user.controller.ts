@@ -12,6 +12,8 @@ import { MsUser } from '@app/common-lib/decorators/ms-user.decorator';
 import { IUser } from '@app/common-lib/interfaces/user.interface';
 import { MsQuery } from '@app/common-lib/decorators/ms-params.decorator';
 import { VerifyEmailDto } from './dto/verify-email.dto';
+import { ForgetPasswordDto } from './dto/forget-password.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @Controller()
 export class UserController {
@@ -48,10 +50,19 @@ export class UserController {
     return this.userService.changePassword(dto, 'str');
   }
 
+  @MessagePattern({ cmd: 'forgot-password' })
+  forgotPassword(@MsBody() dto: ForgetPasswordDto) {
+    return this.userService.forgotPassword(dto);
+  }
+
+  @MessagePattern({ cmd: 'reset-password' })
+  resetPassword(@MsBody() dto: ResetPasswordDto) {
+    return this.userService.resetPassword(dto);
+  }
+
   @MessagePattern({ cmd: 'user-profile' })
   @UseGuards(AuthGuard)
   profile(@MsUser() user: IUser) {
-    console.log(user);
     return this.userService.profile(user.id);
   }
 }

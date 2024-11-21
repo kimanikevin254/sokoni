@@ -60,4 +60,20 @@ export class AuthController {
       this.extractRequestData(req),
     );
   }
+
+  @Post('forgot-password')
+  forgetPassword(@Req() req: IRequest) {
+    return this.userClient.send(
+      { cmd: 'forgot-password' },
+      this.extractRequestData(req),
+    );
+  }
+
+  @Post('reset-password')
+  resetPassword(@Req() req: IRequest) {
+    return this.userClient.send(
+      { cmd: 'reset-password' },
+      this.extractRequestData(req),
+    );
+  }
 }

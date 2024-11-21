@@ -12,6 +12,8 @@ import { ConfigService } from '@nestjs/config';
 import {
   IEmailVerificationTokenRepository,
   IEmailVerificationTokenRepositoryToken,
+  IPasswordResetTokenRepository,
+  IPasswordResetTokenRepositoryToken,
   IRefreshTokenRepository,
   IRefreshTokenRepositoryToken,
   IUserRepository,
@@ -19,6 +21,8 @@ import {
 } from '@app/database';
 import { CustomRpcException } from '@app/common-lib/utils/custom-rpc-exception';
 import { VerifyEmailDto } from './dto/verify-email.dto';
+import { ForgetPasswordDto } from './dto/forget-password.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @Injectable()
 export class UserService {
@@ -33,6 +37,8 @@ export class UserService {
     private readonly refreshTokenRepository: IRefreshTokenRepository,
     @Inject(IEmailVerificationTokenRepositoryToken)
     private readonly emailVerificationTokenRepository: IEmailVerificationTokenRepository,
+    @Inject(IPasswordResetTokenRepositoryToken)
+    private readonly passwordResetTokenRepository: IPasswordResetTokenRepository,
   ) {}
 
   private async hashPassword(password: string) {
@@ -128,43 +134,36 @@ export class UserService {
   }
 
   async verifyEmail(dto: VerifyEmailDto) {
-    try {
-      // Check if token is valid
-      const emailVerificationToken =
-        await this.emailVerificationTokenRepository.findValidToken(dto.token);
+    // Check if token is valid
+    const emailVerificationToken =
+      await this.emailVerificationTokenRepository.findValidToken(dto.token);
 
-      if (!emailVerificationToken) {
-        throw new CustomRpcException({
-          message: 'Invalid token',
-          statusCode: HttpStatus.BAD_REQUEST,
-        });
-      }
-
-      console.log(emailVerificationToken);
-
-      // Mark user's email as verified
-      const user = await this.userRepository.update(
-        emailVerificationToken.user.id,
-        { emailVerifiedAt: new Date() },
-      );
-
-      // Expire the token
-      await this.emailVerificationTokenRepository.update(
-        emailVerificationToken.id,
-        { expiresAt: new Date() },
-      );
-
-      // Generate tokens
-      const tokens = await this.generateTokens(user.id);
-
-      return {
-        tokens,
-        userId: user.id,
-      };
-    } catch (error) {
-      console.log(error);
-      throw error;
+    if (!emailVerificationToken) {
+      throw new CustomRpcException({
+        message: 'Invalid token',
+        statusCode: HttpStatus.BAD_REQUEST,
+      });
     }
+
+    // Mark user's email as verified
+    const user = await this.userRepository.update(
+      emailVerificationToken.user.id,
+      { emailVerifiedAt: new Date() },
+    );
+
+    // Expire the token
+    await this.emailVerificationTokenRepository.update(
+      emailVerificationToken.id,
+      { expiresAt: new Date() },
+    );
+
+    // Generate tokens
+    const tokens = await this.generateTokens(user.id);
+
+    return {
+      tokens,
+      userId: user.id,
+    };
   }
 
   async login(dto: LogInDto) {
@@ -276,6 +275,77 @@ export class UserService {
 
     return {
       message: 'Password updated successfully',
+    };
+  }
+
+  async forgotPassword(dto: ForgetPasswordDto) {
+    // Make sure user exists
+    const user = await this.userRepository.findByEmail(dto.email);
+
+    if (user) {
+      // Generate a password rest token
+      const token = randomBytes(32).toString('hex');
+
+      // Save the password reset token to db
+      const passwordResetToken = this.passwordResetTokenRepository.create({
+        token,
+        user,
+        expiresAt: new Date(
+          Date.now() +
+            parseInt(
+              this.configService.get<string>(
+                'config.linksTtl.passwordResetLink',
+              ),
+            ) *
+              60 *
+              1000,
+        ),
+      });
+
+      await this.passwordResetTokenRepository.save(passwordResetToken);
+
+      // Send email
+      this.notificationClient.emit('send_password_reset_mail', {
+        to: user.email,
+        name: user.name,
+        token,
+      });
+    }
+
+    return {
+      message:
+        'If this email address is registered, you will receive a password reset link.',
+    };
+  }
+
+  async resetPassword(dto: ResetPasswordDto) {
+    // Check if token exists
+    const passwordResetToken =
+      await this.passwordResetTokenRepository.findValidToken(dto.token);
+
+    if (!passwordResetToken) {
+      throw new CustomRpcException({
+        message: 'Invalid password reset token',
+        statusCode: HttpStatus.BAD_REQUEST,
+      });
+    }
+
+    // Reset user's password
+    const hashedPassword = await this.hashPassword(dto.password);
+
+    // Update user's password
+    await this.userRepository.update(passwordResetToken.user.id, {
+      passwordHash: hashedPassword,
+    });
+
+    // Invalidate the token
+    await this.passwordResetTokenRepository.update(passwordResetToken.id, {
+      expiresAt: new Date(),
+    });
+
+    return {
+      message:
+        'Password reset successfully. You can now log in with your new credentials',
     };
   }
 
