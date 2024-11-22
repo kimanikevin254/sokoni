@@ -72,6 +72,15 @@
       "compilerOptions": {
         "tsConfigPath": "libs/authentication/tsconfig.lib.json"
       }
+    },
+    "store": {
+      "type": "application",
+      "root": "apps/store",
+      "entryFile": "main",
+      "sourceRoot": "apps/store/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/store/tsconfig.app.json"
+      }
     }
   }
 }

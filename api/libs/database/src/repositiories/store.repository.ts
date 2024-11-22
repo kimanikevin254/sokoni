@@ -11,7 +11,7 @@ export class StoreRepository
   implements IStoreRepository
 {
   constructor(
-    @InjectRepository(StoreRepository)
+    @InjectRepository(StoreEntity)
     repository: Repository<StoreEntity>,
   ) {
     super(repository);

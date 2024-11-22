@@ -6,3 +6,4 @@ export const EmailVerificationTokenRepositoryToken = Symbol(
 export const PasswordResetTokenRepositoryToken = Symbol(
   'PasswordResetTokenRepository',
 );
+export const StoreRepositoryToken = Symbol('StoreRepository');

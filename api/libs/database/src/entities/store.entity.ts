@@ -28,7 +28,7 @@ export class StoreEntity extends BaseEntity {
   @Column({ type: 'varchar', length: 255, nullable: true })
   websiteUrl?: string;
 
-  @Column({ type: 'boolean', default: true })
+  @Column({ type: 'boolean', default: false })
   isActive: boolean;
 
   @Column({ type: 'boolean', default: false })

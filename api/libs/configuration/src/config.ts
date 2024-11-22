@@ -20,6 +20,7 @@ interface Config {
   queues: {
     user: string;
     notification: string;
+    store: string;
   };
   app: {
     name: string;
@@ -65,6 +66,7 @@ export default registerAs<Config>('config', () => ({
   queues: {
     user: process.env.RABBITMQ_USER_QUEUE,
     notification: process.env.RABBITMQ_NOTIFICATION_QUEUE,
+    store: process.env.RABBITMQ_STORE_QUEUE,
   },
   app: {
     name: process.env.APP_NAME,
