@@ -7,6 +7,7 @@ import { ConfigurationModule } from '@app/configuration';
 import { ConfigService } from '@nestjs/config';
 import { AuthController } from './controllers/user/auth.controller';
 import { StoreController } from './controllers/store/store.controller';
+import { ProductController } from './controllers/store/product.controller';
 
 @Module({
   imports: [
@@ -43,7 +44,13 @@ import { StoreController } from './controllers/store/store.controller';
     ]),
     CommonLibModule,
   ],
-  controllers: [AppController, AuthController, UserController, StoreController],
+  controllers: [
+    AppController,
+    AuthController,
+    UserController,
+    StoreController,
+    ProductController,
+  ],
   providers: [],
 })
 export class AppModule {}

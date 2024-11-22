@@ -5,8 +5,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import {
   EmailVerificationTokenEntity,
   PasswordResetTokenEntity,
+  ProductEntity,
   RefreshTokenEntity,
   StoreEntity,
+  StoreProductEntity,
   UserEntity,
 } from './entities';
 
@@ -29,6 +31,8 @@ import {
             EmailVerificationTokenEntity,
             PasswordResetTokenEntity,
             StoreEntity,
+            ProductEntity,
+            StoreProductEntity,
           ],
           synchronize: true, // Not to be used in prod
         };
@@ -41,6 +45,8 @@ import {
       EmailVerificationTokenEntity,
       PasswordResetTokenEntity,
       StoreEntity,
+      ProductEntity,
+      StoreProductEntity,
     ]),
   ],
   exports: [TypeOrmModule],

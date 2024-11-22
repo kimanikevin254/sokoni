@@ -1,6 +1,7 @@
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { UserEntity } from './user.entity';
+import { StoreProductEntity } from './store-product.entity';
 
 @Entity({ name: 'store' })
 export class StoreEntity extends BaseEntity {
@@ -38,4 +39,7 @@ export class StoreEntity extends BaseEntity {
     onDelete: 'CASCADE',
   })
   owner: UserEntity;
+
+  @OneToMany(() => StoreProductEntity, (storeProduct) => storeProduct.store)
+  storeProducts: StoreProductEntity[];
 }
