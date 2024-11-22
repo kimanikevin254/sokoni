@@ -3,6 +3,7 @@ import { RefreshTokenEntity } from './refresh-token.entity';
 import { EmailVerificationTokenEntity } from './email-verification-token.entity';
 import { PasswordResetTokenEntity } from './password-reset-token.entity';
 import { BaseEntity } from './base.entity';
+import { StoreEntity } from './store.entity';
 
 @Entity({ name: 'user' })
 export class UserEntity extends BaseEntity {
@@ -35,4 +36,7 @@ export class UserEntity extends BaseEntity {
     (passwordResetTokenEntity) => passwordResetTokenEntity.user,
   )
   passwordResetTokens: PasswordResetTokenEntity[];
+
+  @OneToMany(() => StoreEntity, (storeEntity) => storeEntity.owner)
+  stores: StoreEntity[];
 }

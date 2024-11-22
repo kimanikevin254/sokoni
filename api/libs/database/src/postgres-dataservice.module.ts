@@ -6,6 +6,7 @@ import {
   EmailVerificationTokenEntity,
   PasswordResetTokenEntity,
   RefreshTokenEntity,
+  StoreEntity,
   UserEntity,
 } from './entities';
 
@@ -27,6 +28,7 @@ import {
             RefreshTokenEntity,
             EmailVerificationTokenEntity,
             PasswordResetTokenEntity,
+            StoreEntity,
           ],
           synchronize: true, // Not to be used in prod
         };
@@ -38,6 +40,7 @@ import {
       RefreshTokenEntity,
       EmailVerificationTokenEntity,
       PasswordResetTokenEntity,
+      StoreEntity,
     ]),
   ],
   exports: [TypeOrmModule],
