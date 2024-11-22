@@ -1,30 +1,17 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, Entity, ManyToOne } from 'typeorm';
 import { UserEntity } from './user.entity';
+import { BaseEntity } from './base.entity';
 
 @Entity({ name: 'refresh-token' })
-export class RefreshTokenEntity {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
-  @Column({ unique: true })
+export class RefreshTokenEntity extends BaseEntity {
+  @Column({ unique: true, type: 'text' })
   token: string;
 
-  @Column()
+  @Column({ type: 'timestamptz' })
   expiresAt: Date;
 
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
-
-  @ManyToOne(() => UserEntity, (userEntity) => userEntity.id)
+  @ManyToOne(() => UserEntity, (userEntity) => userEntity.refreshTokens, {
+    onDelete: 'CASCADE',
+  })
   user: UserEntity;
 }

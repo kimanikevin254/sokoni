@@ -1,30 +1,19 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, Entity, ManyToOne } from 'typeorm';
 import { UserEntity } from './user.entity';
+import { BaseEntity } from './base.entity';
 
 @Entity({ name: 'email-verification-token' })
-export class EmailVerificationTokenEntity {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
-  @Column({ unique: true })
+export class EmailVerificationTokenEntity extends BaseEntity {
+  @Column({ unique: true, type: 'text' })
   token: string;
 
-  @Column()
+  @Column({ type: 'timestamptz' })
   expiresAt: Date;
 
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
-
-  @ManyToOne(() => UserEntity, (userEntity) => userEntity.id)
+  @ManyToOne(
+    () => UserEntity,
+    (userEntity) => userEntity.emailVerificationTokens,
+    { onDelete: 'CASCADE' },
+  )
   user: UserEntity;
 }

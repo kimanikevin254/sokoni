@@ -1,37 +1,22 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 import { RefreshTokenEntity } from './refresh-token.entity';
 import { EmailVerificationTokenEntity } from './email-verification-token.entity';
 import { PasswordResetTokenEntity } from './password-reset-token.entity';
+import { BaseEntity } from './base.entity';
 
 @Entity({ name: 'user' })
-export class UserEntity {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
-  @Column()
+export class UserEntity extends BaseEntity {
+  @Column({ type: 'varchar', length: 100 })
   name: string;
 
-  @Column({ unique: true })
+  @Column({ type: 'varchar', length: 150, unique: true })
   email: string;
 
-  @Column()
+  @Column({ type: 'text' })
   passwordHash: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'timestamptz' })
   emailVerifiedAt?: Date | null;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
 
   @OneToMany(
     () => RefreshTokenEntity,
@@ -47,7 +32,7 @@ export class UserEntity {
 
   @OneToMany(
     () => PasswordResetTokenEntity,
-    (passwordResetTokenEntity) => passwordResetTokenEntity.id,
+    (passwordResetTokenEntity) => passwordResetTokenEntity.user,
   )
   passwordResetTokens: PasswordResetTokenEntity[];
 }

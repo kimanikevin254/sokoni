@@ -1,30 +1,17 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, Entity, ManyToOne } from 'typeorm';
 import { UserEntity } from './user.entity';
+import { BaseEntity } from './base.entity';
 
 @Entity({ name: 'password-reset-token' })
-export class PasswordResetTokenEntity {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
-  @Column({ unique: true })
+export class PasswordResetTokenEntity extends BaseEntity {
+  @Column({ unique: true, type: 'text' })
   token: string;
 
-  @Column()
+  @Column({ type: 'timestamptz' })
   expiresAt: Date;
 
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
-
-  @ManyToOne(() => UserEntity, (userEntity) => userEntity.id)
+  @ManyToOne(() => UserEntity, (userEntity) => userEntity.passwordResetTokens, {
+    onDelete: 'CASCADE',
+  })
   user: UserEntity;
 }
