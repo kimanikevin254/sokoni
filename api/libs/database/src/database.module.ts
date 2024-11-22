@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { UserRepository } from './repositiories/user.repository';
 import {
-  IEmailVerificationTokenRepositoryToken,
-  IPasswordResetTokenRepositoryToken,
-  IRefreshTokenRepositoryToken,
-  IUserRepositoryToken,
+  EmailVerificationTokenRepositoryToken,
+  PasswordResetTokenRepositoryToken,
+  RefreshTokenRepositoryToken,
+  UserRepositoryToken,
 } from './constants';
 import { PostgresDataServiceModule } from './postgres-dataservice.module';
 import {
@@ -16,27 +16,27 @@ import {
 @Module({
   providers: [
     {
-      provide: IUserRepositoryToken,
+      provide: UserRepositoryToken,
       useClass: UserRepository,
     },
     {
-      provide: IRefreshTokenRepositoryToken,
+      provide: RefreshTokenRepositoryToken,
       useClass: RefreshTokenRepository,
     },
     {
-      provide: IEmailVerificationTokenRepositoryToken,
+      provide: EmailVerificationTokenRepositoryToken,
       useClass: EmailVerificationTokenRepository,
     },
     {
-      provide: IPasswordResetTokenRepositoryToken,
+      provide: PasswordResetTokenRepositoryToken,
       useClass: PasswordResetTokenRepository,
     },
   ],
   exports: [
-    IUserRepositoryToken,
-    IRefreshTokenRepositoryToken,
-    IEmailVerificationTokenRepositoryToken,
-    IPasswordResetTokenRepositoryToken,
+    UserRepositoryToken,
+    RefreshTokenRepositoryToken,
+    EmailVerificationTokenRepositoryToken,
+    PasswordResetTokenRepositoryToken,
   ],
   imports: [PostgresDataServiceModule],
 })

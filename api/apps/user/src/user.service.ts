@@ -11,13 +11,13 @@ import { ChangePasswordDto } from './dto/change-password.dto';
 import { ConfigService } from '@nestjs/config';
 import {
   IEmailVerificationTokenRepository,
-  IEmailVerificationTokenRepositoryToken,
+  EmailVerificationTokenRepositoryToken,
   IPasswordResetTokenRepository,
-  IPasswordResetTokenRepositoryToken,
+  PasswordResetTokenRepositoryToken,
   IRefreshTokenRepository,
-  IRefreshTokenRepositoryToken,
+  RefreshTokenRepositoryToken,
   IUserRepository,
-  IUserRepositoryToken,
+  UserRepositoryToken,
 } from '@app/database';
 import { CustomRpcException } from '@app/common-lib/utils/custom-rpc-exception';
 import { VerifyEmailDto } from './dto/verify-email.dto';
@@ -31,13 +31,13 @@ export class UserService {
     @Inject('NOTIFICATION_SERVICE')
     private readonly notificationClient: ClientProxy,
     private readonly configService: ConfigService,
-    @Inject(IUserRepositoryToken)
+    @Inject(UserRepositoryToken)
     private readonly userRepository: IUserRepository,
-    @Inject(IRefreshTokenRepositoryToken)
+    @Inject(RefreshTokenRepositoryToken)
     private readonly refreshTokenRepository: IRefreshTokenRepository,
-    @Inject(IEmailVerificationTokenRepositoryToken)
+    @Inject(EmailVerificationTokenRepositoryToken)
     private readonly emailVerificationTokenRepository: IEmailVerificationTokenRepository,
-    @Inject(IPasswordResetTokenRepositoryToken)
+    @Inject(PasswordResetTokenRepositoryToken)
     private readonly passwordResetTokenRepository: IPasswordResetTokenRepository,
   ) {}
 
@@ -256,15 +256,15 @@ export class UserService {
     }
 
     // Check if user password is same as provided old password
-    const passwordMatches = await bcrypt.compare(
+    const isOldPasswordValid = await bcrypt.compare(
       dto.oldPassword,
       user.passwordHash,
     );
 
-    if (!passwordMatches) {
+    if (!isOldPasswordValid) {
       throw new CustomRpcException({
         statusCode: HttpStatus.BAD_REQUEST,
-        message: 'Passwords do not match',
+        message: 'Old password is incorrect',
       });
     }
 

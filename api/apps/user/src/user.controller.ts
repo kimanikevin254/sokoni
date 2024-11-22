@@ -46,8 +46,9 @@ export class UserController {
   }
 
   @MessagePattern({ cmd: 'change-password' })
-  changePassword(@MsBody() dto: ChangePasswordDto) {
-    return this.userService.changePassword(dto, 'str');
+  @UseGuards(AuthGuard)
+  changePassword(@MsBody() dto: ChangePasswordDto, @MsUser() user: IUser) {
+    return this.userService.changePassword(dto, user.id);
   }
 
   @MessagePattern({ cmd: 'forgot-password' })
