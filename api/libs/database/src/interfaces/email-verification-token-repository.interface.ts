@@ -1,15 +1,7 @@
 import { EmailVerificationTokenEntity } from '../entities';
+import { IBaseRepository } from './base-repository.interface';
 
-export interface IEmailVerificationTokenRepository {
-  create(
-    emailVerificationToken: Partial<EmailVerificationTokenEntity>,
-  ): EmailVerificationTokenEntity;
-  save(
-    emailVerificationToken: EmailVerificationTokenEntity,
-  ): Promise<EmailVerificationTokenEntity>;
+export interface IEmailVerificationTokenRepository
+  extends IBaseRepository<EmailVerificationTokenEntity> {
   findValidToken(token: string): Promise<EmailVerificationTokenEntity | null>;
-  update(
-    id: string,
-    updates: Partial<EmailVerificationTokenEntity>,
-  ): Promise<EmailVerificationTokenEntity>;
 }

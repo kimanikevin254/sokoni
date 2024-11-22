@@ -1,14 +1,10 @@
 import { RefreshTokenEntity } from '../entities';
+import { IBaseRepository } from './base-repository.interface';
 
-export interface IRefreshTokenRepository {
-  create(refreshToken: Partial<RefreshTokenEntity>): RefreshTokenEntity;
-  save(refreshToken: RefreshTokenEntity): Promise<RefreshTokenEntity>;
+export interface IRefreshTokenRepository
+  extends IBaseRepository<RefreshTokenEntity> {
   findValidToken(refreshToken: {
     token: string;
     userId: string;
   }): Promise<RefreshTokenEntity | null>;
-  update(
-    id: string,
-    updates: Partial<RefreshTokenEntity>,
-  ): Promise<RefreshTokenEntity>;
 }

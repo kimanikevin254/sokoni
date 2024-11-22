@@ -3,30 +3,22 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { MoreThanOrEqual, Repository } from 'typeorm';
 import { EmailVerificationTokenEntity } from '../entities';
 import { IEmailVerificationTokenRepository } from '../interfaces';
+import { BaseRepository } from './base.repository';
 
 @Injectable()
 export class EmailVerificationTokenRepository
+  extends BaseRepository<EmailVerificationTokenEntity>
   implements IEmailVerificationTokenRepository
 {
   constructor(
     @InjectRepository(EmailVerificationTokenEntity)
-    private readonly repository: Repository<EmailVerificationTokenEntity>,
-  ) {}
-
-  create(
-    emailVerificationToken: Partial<EmailVerificationTokenEntity>,
-  ): EmailVerificationTokenEntity {
-    return this.repository.create(emailVerificationToken);
-  }
-
-  save(
-    emailVerificationToken: EmailVerificationTokenEntity,
-  ): Promise<EmailVerificationTokenEntity> {
-    return this.repository.save(emailVerificationToken);
+    repository: Repository<EmailVerificationTokenEntity>,
+  ) {
+    super(repository);
   }
 
   findValidToken(token: string): Promise<EmailVerificationTokenEntity> {
-    return this.repository.findOne({
+    return this.findOne({
       where: { token, expiresAt: MoreThanOrEqual(new Date()) },
       relations: ['user'],
       select: {
@@ -34,16 +26,6 @@ export class EmailVerificationTokenRepository
           id: true,
         },
       },
-    });
-  }
-
-  async update(
-    id: string,
-    updates: Partial<EmailVerificationTokenEntity>,
-  ): Promise<EmailVerificationTokenEntity> {
-    await this.repository.update(id, updates);
-    return await this.repository.findOne({
-      where: { id },
     });
   }
 }

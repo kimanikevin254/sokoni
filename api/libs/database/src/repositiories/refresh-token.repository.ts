@@ -3,22 +3,19 @@ import { IRefreshTokenRepository } from '../interfaces';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MoreThanOrEqual, Repository } from 'typeorm';
 import { RefreshTokenEntity } from '../entities';
+import { BaseRepository } from './base.repository';
 
 @Injectable()
-export class RefreshTokenRepository implements IRefreshTokenRepository {
+export class RefreshTokenRepository
+  extends BaseRepository<RefreshTokenEntity>
+  implements IRefreshTokenRepository
+{
   constructor(
     @InjectRepository(RefreshTokenEntity)
-    private readonly repository: Repository<RefreshTokenEntity>,
-  ) {}
-
-  create(refreshToken: Partial<RefreshTokenEntity>): RefreshTokenEntity {
-    return this.repository.create(refreshToken);
+    repository: Repository<RefreshTokenEntity>,
+  ) {
+    super(repository);
   }
-
-  save(refreshToken: RefreshTokenEntity): Promise<RefreshTokenEntity> {
-    return this.repository.save(refreshToken);
-  }
-
   findValidToken(refreshToken: {
     token: string;
     userId: string;
@@ -35,16 +32,6 @@ export class RefreshTokenRepository implements IRefreshTokenRepository {
           id: true,
         },
       },
-    });
-  }
-
-  async update(
-    id: string,
-    updates: Partial<RefreshTokenEntity>,
-  ): Promise<RefreshTokenEntity> {
-    await this.repository.update(id, updates);
-    return await this.repository.findOne({
-      where: { id },
     });
   }
 }

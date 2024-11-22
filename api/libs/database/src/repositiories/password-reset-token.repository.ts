@@ -3,30 +3,22 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { MoreThanOrEqual, Repository } from 'typeorm';
 import { PasswordResetTokenEntity } from '../entities';
 import { IPasswordResetTokenRepository } from '../interfaces';
+import { BaseRepository } from './base.repository';
 
 @Injectable()
 export class PasswordResetTokenRepository
+  extends BaseRepository<PasswordResetTokenEntity>
   implements IPasswordResetTokenRepository
 {
   constructor(
     @InjectRepository(PasswordResetTokenEntity)
-    private readonly repository: Repository<PasswordResetTokenEntity>,
-  ) {}
-
-  create(
-    passwordResetToken: Partial<PasswordResetTokenEntity>,
-  ): PasswordResetTokenEntity {
-    return this.repository.create(passwordResetToken);
-  }
-
-  save(
-    passwordResetToken: PasswordResetTokenEntity,
-  ): Promise<PasswordResetTokenEntity> {
-    return this.repository.save(passwordResetToken);
+    repository: Repository<PasswordResetTokenEntity>,
+  ) {
+    super(repository);
   }
 
   findValidToken(token: string): Promise<PasswordResetTokenEntity> {
-    return this.repository.findOne({
+    return this.findOne({
       where: { token, expiresAt: MoreThanOrEqual(new Date()) },
       relations: ['user'],
       select: {
@@ -34,16 +26,6 @@ export class PasswordResetTokenRepository
           id: true,
         },
       },
-    });
-  }
-
-  async update(
-    id: string,
-    updates: Partial<PasswordResetTokenEntity>,
-  ): Promise<PasswordResetTokenEntity> {
-    await this.repository.update(id, updates);
-    return await this.repository.findOne({
-      where: { id },
     });
   }
 }

@@ -27,9 +27,3 @@ export class UserRepository
     });
   }
 }
-
-//   async update(id: string, updates: Partial<UserEntity>): Promise<UserEntity> {
-//     await this.repository.update(id, updates);
-//     return await this.repository.findOne({ where: { id } });
-//   }
-// }
