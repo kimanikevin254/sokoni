@@ -10,7 +10,7 @@ import { AuthGuard } from '@app/authentication/guards/auth.guard';
 import { MsBody } from '@app/common-lib/decorators/ms-body.decorator';
 import { MsUser } from '@app/common-lib/decorators/ms-user.decorator';
 import { IUser } from '@app/common-lib/interfaces/user.interface';
-import { MsQuery } from '@app/common-lib/decorators/ms-params.decorator';
+import { MsQuery } from '@app/common-lib/decorators/ms-query.decorator';
 import { VerifyEmailDto } from './dto/verify-email.dto';
 import { ForgetPasswordDto } from './dto/forget-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';

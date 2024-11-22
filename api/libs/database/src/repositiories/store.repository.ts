@@ -16,4 +16,17 @@ export class StoreRepository
   ) {
     super(repository);
   }
+
+  findUserStore(userId: string, storeId: string): Promise<StoreEntity | null> {
+    return this.findOne({
+      where: {
+        id: storeId,
+        owner: { id: userId },
+      },
+    });
+  }
+
+  findBySlug(slug: string): Promise<StoreEntity | null> {
+    return this.findOne({ where: { slug } });
+  }
 }

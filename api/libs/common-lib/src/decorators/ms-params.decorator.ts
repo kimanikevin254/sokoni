@@ -1,8 +1,8 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 
-export const MsQuery = createParamDecorator(
-  (data: unknown, ctx: ExecutionContext) => {
+export const MsParams = createParamDecorator(
+  (data: string, ctx: ExecutionContext) => {
     const request = ctx.switchToRpc().getData();
-    return request.query;
+    return data ? request.params[data] : request.params;
   },
 );

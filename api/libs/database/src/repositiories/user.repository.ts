@@ -20,10 +20,4 @@ export class UserRepository
   findByEmail(email: string): Promise<UserEntity | null> {
     return this.findOne({ where: { email } });
   }
-
-  findById(id: string): Promise<UserEntity | null> {
-    return this.findOne({
-      where: { id },
-    });
-  }
 }

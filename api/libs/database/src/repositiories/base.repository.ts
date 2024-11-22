@@ -30,6 +30,10 @@ export class BaseRepository<T> implements IBaseRepository<T> {
     return this.repository.find({ relations });
   }
 
+  findById(id: string): Promise<T> {
+    return this.findOne({ where: { id } as { id: any } });
+  }
+
   delete(id: string): Promise<DeleteResult> {
     return this.repository.delete(id);
   }
