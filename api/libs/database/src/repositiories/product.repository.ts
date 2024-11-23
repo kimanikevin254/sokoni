@@ -16,4 +16,20 @@ export class ProductRepository
   ) {
     super(repository);
   }
+
+  findBySlug(slug: string): Promise<ProductEntity | null> {
+    return this.findOne({ where: { slug } });
+  }
+
+  findUserProduct(
+    userId: string,
+    productId: string,
+  ): Promise<ProductEntity | null> {
+    return this.findOne({
+      where: {
+        id: productId,
+        owner: { id: userId },
+      },
+    });
+  }
 }

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import {
   EmailVerificationTokenRepositoryToken,
   PasswordResetTokenRepositoryToken,
@@ -17,6 +17,7 @@ import {
   UserRepository,
 } from './repositiories';
 
+@Global()
 @Module({
   providers: [
     {

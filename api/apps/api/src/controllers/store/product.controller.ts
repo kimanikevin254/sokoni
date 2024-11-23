@@ -1,4 +1,4 @@
-import { Controller, Get, Inject, Req } from '@nestjs/common';
+import { Controller, Inject, Patch, Post, Req } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { IRequest } from '../../interfaces/request.interface';
 
@@ -14,10 +14,18 @@ export class ProductController {
     return { headers, body, query, params };
   }
 
-  @Get()
-  products(@Req() req: IRequest) {
+  @Post()
+  create(@Req() req: IRequest) {
     return this.storeClient.send(
-      { cmd: 'products' },
+      { cmd: 'create-product' },
+      this.extractRequestData(req),
+    );
+  }
+
+  @Patch(':productId')
+  update(@Req() req: IRequest) {
+    return this.storeClient.send(
+      { cmd: 'update-product' },
       this.extractRequestData(req),
     );
   }
