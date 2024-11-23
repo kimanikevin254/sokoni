@@ -29,4 +29,10 @@ export class ProductController {
   ) {
     return this.productService.update(user.id, params, dto);
   }
+
+  @MessagePattern({ cmd: 'my-products' })
+  @UseGuards(AuthGuard)
+  myProducts(@MsUser() user: IUser) {
+    return this.productService.myProducts(user.id);
+  }
 }

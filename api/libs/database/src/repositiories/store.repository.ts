@@ -29,4 +29,8 @@ export class StoreRepository
   findBySlug(slug: string): Promise<StoreEntity | null> {
     return this.findOne({ where: { slug } });
   }
+
+  findUserStores(userId: string): Promise<StoreEntity[] | []> {
+    return this.find({ owner: { id: userId } });
+  }
 }

@@ -29,4 +29,10 @@ export class StoreController {
   ) {
     return this.storeService.updateStore(user.id, params, dto);
   }
+
+  @MessagePattern({ cmd: 'my-stores' })
+  @UseGuards(AuthGuard)
+  myStores(@MsUser() user: IUser) {
+    return this.storeService.myStores(user.id);
+  }
 }

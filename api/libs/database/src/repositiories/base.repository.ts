@@ -22,7 +22,7 @@ export class BaseRepository<T> implements IBaseRepository<T> {
     return this.repository.findOne(where);
   }
 
-  find(where: FindOptionsWhere<T>, relations: string[]): Promise<T[]> {
+  find(where: FindOptionsWhere<T>, relations?: string[]): Promise<T[]> {
     return this.repository.find({ where, relations });
   }
 

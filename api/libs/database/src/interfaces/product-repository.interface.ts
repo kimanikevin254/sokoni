@@ -7,4 +7,5 @@ export interface IProductRepository extends IBaseRepository<ProductEntity> {
     userId: string,
     productId: string,
   ): Promise<ProductEntity | null>;
+  findUserProducts(userId: string): Promise<ProductEntity[] | [null]>;
 }

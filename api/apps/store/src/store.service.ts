@@ -67,4 +67,8 @@ export class StoreService {
 
     await this.storeRepository.update(store.id, dto);
   }
+
+  myStores(userId: string) {
+    return this.storeRepository.findUserStores(userId);
+  }
 }

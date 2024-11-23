@@ -88,4 +88,8 @@ export class ProductService {
     // Update product
     return this.productRepository.update(product.id, dto);
   }
+
+  myProducts(userId: string) {
+    return this.productRepository.findUserProducts(userId);
+  }
 }

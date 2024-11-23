@@ -32,4 +32,8 @@ export class ProductRepository
       },
     });
   }
+
+  findUserProducts(userId: string): Promise<ProductEntity[] | [null]> {
+    return this.find({ owner: { id: userId } });
+  }
 }
