@@ -7,3 +7,4 @@ export const PasswordResetTokenRepositoryToken = Symbol(
   'PasswordResetTokenRepository',
 );
 export const StoreRepositoryToken = Symbol('StoreRepository');
+export const ProductRepositoryToken = Symbol('ProductRepository');

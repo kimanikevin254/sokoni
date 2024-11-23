@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import {
   EmailVerificationTokenRepositoryToken,
   PasswordResetTokenRepositoryToken,
+  ProductRepositoryToken,
   RefreshTokenRepositoryToken,
   StoreRepositoryToken,
   UserRepositoryToken,
@@ -10,6 +11,7 @@ import { PostgresDataServiceModule } from './postgres-dataservice.module';
 import {
   EmailVerificationTokenRepository,
   PasswordResetTokenRepository,
+  ProductRepository,
   RefreshTokenRepository,
   StoreRepository,
   UserRepository,
@@ -37,6 +39,10 @@ import {
       provide: StoreRepositoryToken,
       useClass: StoreRepository,
     },
+    {
+      provide: ProductRepositoryToken,
+      useClass: ProductRepository,
+    },
   ],
   exports: [
     UserRepositoryToken,
@@ -44,6 +50,7 @@ import {
     EmailVerificationTokenRepositoryToken,
     PasswordResetTokenRepositoryToken,
     StoreRepositoryToken,
+    ProductRepositoryToken,
   ],
   imports: [PostgresDataServiceModule],
 })
