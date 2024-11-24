@@ -9,6 +9,7 @@ import { MsParams } from '@app/common-lib/decorators/ms-params.decorator';
 import { UpdateStoreParamsDto } from './dto/update-store-params.dto';
 import { MsUser } from '@app/common-lib/decorators/ms-user.decorator';
 import { IUser } from '@app/common-lib/interfaces/user.interface';
+import { AddProductsToStoreDto } from './dto/add-products-to-store.dto';
 
 @Controller()
 export class StoreController {
@@ -34,5 +35,11 @@ export class StoreController {
   @UseGuards(AuthGuard)
   myStores(@MsUser() user: IUser) {
     return this.storeService.myStores(user.id);
+  }
+
+  @MessagePattern({ cmd: 'add-to-store' })
+  @UseGuards(AuthGuard)
+  addToStore(@MsUser() user: IUser, @MsBody() dto: AddProductsToStoreDto) {
+    return this.storeService.addProductsToStore(user.id, dto);
   }
 }

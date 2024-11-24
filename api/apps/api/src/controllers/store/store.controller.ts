@@ -37,4 +37,12 @@ export class StoreController {
       this.extractRequestData(req),
     );
   }
+
+  @Post('add-products')
+  addProducts(@Req() req: IRequest) {
+    return this.storeClient.send(
+      { cmd: 'add-to-store' },
+      this.extractRequestData(req),
+    );
+  }
 }

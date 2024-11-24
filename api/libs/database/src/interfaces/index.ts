@@ -5,3 +5,4 @@ export * from './email-verification-token-repository.interface';
 export * from './password-reset-token-repository.interface';
 export * from './store-repository.interface';
 export * from './product-repository.interface';
+export * from './store-product-repository.interface';

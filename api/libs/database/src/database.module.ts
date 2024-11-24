@@ -4,6 +4,7 @@ import {
   PasswordResetTokenRepositoryToken,
   ProductRepositoryToken,
   RefreshTokenRepositoryToken,
+  StoreProductRepositoryToken,
   StoreRepositoryToken,
   UserRepositoryToken,
 } from './constants';
@@ -13,6 +14,7 @@ import {
   PasswordResetTokenRepository,
   ProductRepository,
   RefreshTokenRepository,
+  StoreProductRepository,
   StoreRepository,
   UserRepository,
 } from './repositiories';
@@ -44,6 +46,10 @@ import {
       provide: ProductRepositoryToken,
       useClass: ProductRepository,
     },
+    {
+      provide: StoreProductRepositoryToken,
+      useClass: StoreProductRepository,
+    },
   ],
   exports: [
     UserRepositoryToken,
@@ -52,6 +58,7 @@ import {
     PasswordResetTokenRepositoryToken,
     StoreRepositoryToken,
     ProductRepositoryToken,
+    StoreProductRepositoryToken,
   ],
   imports: [PostgresDataServiceModule],
 })

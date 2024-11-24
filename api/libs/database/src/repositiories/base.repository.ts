@@ -3,6 +3,7 @@ import {
   DeleteResult,
   FindOneOptions,
   FindOptionsWhere,
+  In,
   Repository,
 } from 'typeorm';
 import { IBaseRepository } from '../interfaces';
@@ -14,8 +15,16 @@ export class BaseRepository<T> implements IBaseRepository<T> {
     return this.repository.create(entity);
   }
 
+  createMany(entity: DeepPartial<T>[]): T[] {
+    return this.repository.create(entity) as T[];
+  }
+
   save(entity: T): Promise<T> {
     return this.repository.save(entity);
+  }
+
+  saveMany(entity: T[]): Promise<T[]> {
+    return this.repository.save(entity) as Promise<T[]>;
   }
 
   findOne(where: FindOneOptions<T>): Promise<T> {
@@ -32,6 +41,10 @@ export class BaseRepository<T> implements IBaseRepository<T> {
 
   findById(id: string): Promise<T> {
     return this.findOne({ where: { id } as { id: any } });
+  }
+
+  findByIds(ids: string[]): Promise<[] | T[]> {
+    return this.find({ id: In(ids) } as { id: any });
   }
 
   delete(id: string): Promise<DeleteResult> {
