@@ -45,4 +45,12 @@ export class StoreController {
       this.extractRequestData(req),
     );
   }
+
+  @Get(':storeId/products')
+  storeProducts(@Req() req: IRequest) {
+    return this.storeClient.send(
+      { cmd: 'get-store-products' },
+      this.extractRequestData(req),
+    );
+  }
 }

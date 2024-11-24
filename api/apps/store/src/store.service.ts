@@ -14,6 +14,7 @@ import { CustomRpcException } from '@app/common-lib/utils/custom-rpc-exception';
 import { UpdateStoreDto } from './dto/update-store.dto';
 import { UpdateStoreParamsDto } from './dto/update-store-params.dto';
 import { AddProductsToStoreDto } from './dto/add-products-to-store.dto';
+import { GetStoreProductsParamsDto } from './dto/get-store-product-params.dto';
 
 @Injectable()
 export class StoreService {
@@ -95,7 +96,7 @@ export class StoreService {
 
     // Fetch existing store-product r/ships
     const existingStoreProducts =
-      await this.storeProductRepository.findProductsInStore(
+      await this.storeProductRepository.findStoreProductsByIds(
         dto.storeId,
         productIds,
       );
@@ -131,5 +132,19 @@ export class StoreService {
     return {
       message: `${productsToAdd.length} product(s) successfully added to the store`,
     };
+  }
+
+  async getStoreProducts(dto: GetStoreProductsParamsDto) {
+    // Make sure store exists
+    const store = await this.storeRepository.findById(dto.storeId);
+
+    if (!store) {
+      throw new CustomRpcException({
+        statusCode: HttpStatus.NOT_FOUND,
+        message: 'Store with the specified ID does not exist',
+      });
+    }
+
+    return this.storeProductRepository.findStoreProducts(dto.storeId);
   }
 }

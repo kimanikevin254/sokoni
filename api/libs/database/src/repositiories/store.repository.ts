@@ -31,6 +31,6 @@ export class StoreRepository
   }
 
   findUserStores(userId: string): Promise<StoreEntity[] | []> {
-    return this.find({ owner: { id: userId } });
+    return this.find({ where: { owner: { id: userId } } });
   }
 }

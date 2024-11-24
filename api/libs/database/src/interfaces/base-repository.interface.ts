@@ -1,8 +1,8 @@
 import {
   DeepPartial,
   DeleteResult,
+  FindManyOptions,
   FindOneOptions,
-  FindOptionsWhere,
 } from 'typeorm';
 
 export interface IBaseRepository<T> {
@@ -11,7 +11,7 @@ export interface IBaseRepository<T> {
   save(entity: T): Promise<T>;
   saveMany(entity: T[]): Promise<T[]>;
   findOne(where: FindOneOptions<T>): Promise<T | null>;
-  find(where: FindOptionsWhere<T>, relations?: string[]): Promise<T[]>;
+  find(options: FindManyOptions<T>): Promise<T[]>;
   findById(id: string): Promise<T | null>;
   findByIds(ids: string[]): Promise<T[] | []>;
   findAll(relations?: string[]): Promise<T[]>;

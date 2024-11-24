@@ -34,6 +34,6 @@ export class ProductRepository
   }
 
   findUserProducts(userId: string): Promise<ProductEntity[] | [null]> {
-    return this.find({ owner: { id: userId } });
+    return this.find({ where: { owner: { id: userId } } });
   }
 }

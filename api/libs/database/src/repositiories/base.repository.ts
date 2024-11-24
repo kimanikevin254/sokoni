@@ -1,8 +1,8 @@
 import {
   DeepPartial,
   DeleteResult,
+  FindManyOptions,
   FindOneOptions,
-  FindOptionsWhere,
   In,
   Repository,
 } from 'typeorm';
@@ -31,8 +31,11 @@ export class BaseRepository<T> implements IBaseRepository<T> {
     return this.repository.findOne(where);
   }
 
-  find(where: FindOptionsWhere<T>, relations?: string[]): Promise<T[]> {
-    return this.repository.find({ where, relations });
+  // find(where: FindOptionsWhere<T>, relations?: string[]): Promise<T[]> {
+  //   return this.repository.find({ where, relations });
+  // }
+  find(options: FindManyOptions<T>): Promise<T[]> {
+    return this.repository.find(options);
   }
 
   findAll(relations?: string[]): Promise<T[]> {
@@ -44,7 +47,7 @@ export class BaseRepository<T> implements IBaseRepository<T> {
   }
 
   findByIds(ids: string[]): Promise<[] | T[]> {
-    return this.find({ id: In(ids) } as { id: any });
+    return this.find({ where: { id: In(ids) } as { id: any } });
   }
 
   delete(id: string): Promise<DeleteResult> {
