@@ -8,5 +8,7 @@ export interface IStoreProductRepository
     productIds: string[],
   ): Promise<StoreProductEntity[]>;
 
-  findStoreProducts(storeId: string): Promise<ProductEntity[]>;
+  findStoreProducts(
+    storeId: string,
+  ): Promise<{ product: ProductEntity; stock: number }[]>;
 }

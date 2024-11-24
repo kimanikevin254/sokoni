@@ -28,12 +28,17 @@ export class StoreProductRepository
     });
   }
 
-  async findStoreProducts(storeId: string): Promise<ProductEntity[]> {
+  async findStoreProducts(
+    storeId: string,
+  ): Promise<{ product: ProductEntity; stock: number }[]> {
     const storeProducts = await this.find({
       where: { store: { id: storeId } },
       relations: ['product'],
     });
 
-    return storeProducts.map((sp) => sp.product);
+    return storeProducts.map((sp) => ({
+      product: sp.product,
+      stock: sp.stock,
+    }));
   }
 }
