@@ -1,6 +1,6 @@
 # SOKONI
 
-A comprehensive ecommerce API leveraging the microservices architecture.
+A comprehensive ecommerce API leveraging a microservices architecture, implemented within a monorepo structure. The project follows the repository pattern to ensure clean and scalable code, with each service responsible for its own domain logic.
 
 ## Microservices:
 
@@ -12,4 +12,4 @@ A comprehensive ecommerce API leveraging the microservices architecture.
 
 - Payment Service: Manages payment processing, transaction logs, refunds, and integration with third-party payment gateways (e.g., Stripe, PayPal).
 
-- Notification Service: Sends notifications like order confirmations, shipping updates, and promotional emails/messages to customers and vendors using email, SMS, or push notifications.
+- Notification Service: Sends notifications like order confirmations, shipping updates, and promotional emails/messages to customers and vendors using email or SMS.
